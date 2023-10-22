@@ -14,7 +14,15 @@ export class AppController {
   }
 
   @Get('/search')
-  post(@Query('search') search: string): Promise<any> {
-    return this.appService.getCurrentLocation(search);
+  post(
+    @Query('search') search: string,
+    @Query('departure') departure: string,
+  ): Promise<any> {
+    return this.appService.getCurrentLocation(search, departure);
+  }
+
+  @Get('/destination')
+  getDestination(): Promise<any> {
+    return this.appService.getDestination();
   }
 }

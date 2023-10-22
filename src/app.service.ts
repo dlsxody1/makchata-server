@@ -7,7 +7,7 @@ export class AppService {
   async getCurrentDirection(latitude: string, longitude: string): Promise<any> {
     console.log(latitude, longitude);
     const res = await fetch(
-      `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${longitude},${latitude}&output=json`,
+      `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${longitude},${latitude}&output=json&orders=addr,admcode`,
       {
         mode: 'cors',
         headers: new Headers({
@@ -18,18 +18,17 @@ export class AppService {
       },
     );
     const data = await res.json();
-    console.log(data.results[0].region.area1.name, '경기');
-    console.log(data.results[0].region.area2.name, '화성시');
-    console.log(data.results[0].region.area3.name, '팔단면');
-    console.log(data.results[0].region.area4.name, '덕우리');
+
+    console.log(data.results[0].land.number1);
+    //${data.results[1].land.number1}-${data.results[1].land.number2}
     return {
-      location: `${data.results[0].region.area1.name} ${data.results[0].region.area2.name} ${data.results[0].region.area3.name} ${data.results[0].region.area4.name}`,
+      location: `${data.results[0].region.area1.name} ${data.results[0].region.area2.name} ${data.results[0].region.area3.name} ${data.results[0].region.area4.name}${data.results[0].land.number1}-${data.results[0].land.number2}`,
     };
   }
 
-  async getCurrentLocation(search: string): Promise<any> {
+  async getCurrentLocation(search: string, departure: string): Promise<any> {
     const res = await fetch(
-      `https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${search}`,
+      `https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${search}&coordinate=${departure}`,
       {
         mode: 'cors',
         headers: new Headers({
@@ -41,7 +40,17 @@ export class AppService {
     );
 
     const data = await res.json();
-    console.log(data.addresses[0].roadAddress);
-    return { location: data.addresses[0].roadAddress };
+    console.log(data);
+    return { addresses: data.addresses };
+  }
+
+  async getDestination() {
+    const res = await fetch(
+      'https://api.odsay.com/v1/api/searchPubTransPathT?SX=126.9027279&SY=37.5349277&EX=126.9145430&EY=37.5499421&apiKey=wOtSqgMKSMTUesQcMH0Yyw',
+    );
+
+    const data = await res.json();
+    console.log(data);
+    return { data };
   }
 }
