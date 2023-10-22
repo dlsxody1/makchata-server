@@ -18,8 +18,13 @@ export class AppService {
       },
     );
     const data = await res.json();
-    console.log(data);
-    return data;
+    console.log(data.results[0].region.area1.name, '경기');
+    console.log(data.results[0].region.area2.name, '화성시');
+    console.log(data.results[0].region.area3.name, '팔단면');
+    console.log(data.results[0].region.area4.name, '덕우리');
+    return {
+      location: `${data.results[0].region.area1.name} ${data.results[0].region.area2.name} ${data.results[0].region.area3.name} ${data.results[0].region.area4.name}`,
+    };
   }
 
   async getCurrentLocation(search: string): Promise<any> {
@@ -37,6 +42,6 @@ export class AppService {
 
     const data = await res.json();
     console.log(data);
-    return data;
+    return { location: data.addresses[0].roadAddress };
   }
 }
