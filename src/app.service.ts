@@ -17,7 +17,7 @@ export class AppService {
       },
     );
     const currentLocation = await res.json();
-    const mergeCurrentLocation = `${currentLocation?.results[0]?.region.area1.name} ${currentLocation.results[0].region.area2.name} ${currentLocation.results[0].region.area3.name} ${currentLocation.results[0].region.area4.name}${currentLocation.results[0].land.number1}-${currentLocation.results[0].land.number2}`;
+    const mergeCurrentLocation = `${currentLocation?.results[0]?.region.area1.name} ${currentLocation.results[0].region.area2.name} ${currentLocation?.results[0]?.region.area3.name} ${currentLocation?.results[0]?.region.area4.name}${currentLocation?.results[0]?.land.number1}-${currentLocation?.results[0]?.land.number2}`;
     const data = await fetch(
       `https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${mergeCurrentLocation}`,
       {
