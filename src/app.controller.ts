@@ -22,7 +22,12 @@ export class AppController {
   }
 
   @Get('/destination')
-  getDestination(): Promise<any> {
-    return this.appService.getDestination();
+  getDestination(
+    @Query('sx') sx: string,
+    @Query('sy') sy: string,
+    @Query('ex') ex: string,
+    @Query('ey') ey: string,
+  ): Promise<any> {
+    return this.appService.getDestination(sx, ex, sy, ey);
   }
 }

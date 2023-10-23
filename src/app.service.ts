@@ -5,7 +5,6 @@ import { ConfigService } from '@nestjs/config';
 export class AppService {
   constructor(private configService: ConfigService) {}
   async getCurrentDirection(latitude: string, longitude: string): Promise<any> {
-    console.log(latitude, longitude);
     const res = await fetch(
       `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${longitude},${latitude}&output=json&orders=addr,admcode`,
       {
@@ -17,12 +16,25 @@ export class AppService {
         }),
       },
     );
-    const data = await res.json();
+    const currentLocation = await res.json();
+    const mergeCurrentLocation = `${currentLocation?.results[0]?.region.area1.name} ${currentLocation.results[0].region.area2.name} ${currentLocation.results[0].region.area3.name} ${currentLocation.results[0].region.area4.name}${currentLocation.results[0].land.number1}-${currentLocation.results[0].land.number2}`;
+    const data = await fetch(
+      `https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=${mergeCurrentLocation}`,
+      {
+        mode: 'cors',
+        headers: new Headers({
+          'X-NCP-APIGW-API-KEY-ID': this.configService.get<string>('CLIENT_ID'),
+          'X-NCP-APIGW-API-KEY':
+            this.configService.get<string>('CLIENT_SECRET'),
+        }),
+      },
+    );
+    const result = await data.json();
 
-    console.log(data.results[0].land.number1);
-    //${data.results[1].land.number1}-${data.results[1].land.number2}
     return {
-      location: `${data.results[0].region.area1.name} ${data.results[0].region.area2.name} ${data.results[0].region.area3.name} ${data.results[0].region.area4.name}${data.results[0].land.number1}-${data.results[0].land.number2}`,
+      currentLocation: result?.addresses[0].roadAddress,
+      x: result?.addresses[0].x,
+      y: result?.addresses[0].y,
     };
   }
 
@@ -40,26 +52,31 @@ export class AppService {
     );
 
     const data = await res.json();
-    console.log(data);
+
     return {
       addresses:
-        data.addresses.length === 0
+        data?.addresses.length === 0
           ? []
           : {
-              roadAddress: data.addresses[0].roadAddress,
-              x: data.addresses[0].x,
-              y: data.addresses[0].y,
+              roadAddress: data?.addresses[0].roadAddress,
+              x: data?.addresses[0].x,
+              y: data?.addresses[0].y,
             },
     };
   }
 
-  async getDestination() {
-    const res = await fetch(
-      'https://api.odsay.com/v1/api/searchPubTransPathT?SX=126.9027279&SY=37.5349277&EX=126.9145430&EY=37.5499421&apiKey=wOtSqgMKSMTUesQcMH0Yyw',
+  async getDestination(sx: string, sy: string, ex: string, ey: string) {
+    console.log(
+      encodeURIComponent(this.configService.get<string>('ODSAY_KEY')),
+    );
+    const destination = await fetch(
+      `https://api.odsay.com/v1/api/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&OPT=1&apiKey=${encodeURIComponent(
+        this.configService.get<string>('ODSAY_KEY'),
+      )}`,
     );
 
-    const data = await res.json();
-    console.log(data);
+    const data = await destination.json();
+
     return { data };
   }
 }
