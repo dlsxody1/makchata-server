@@ -83,8 +83,42 @@ export class AppService {
     );
 
     const data = await destination.json();
-    console.log(data);
+    // traffic type 1지하철 2버스 3도보
 
-    return { data };
+    console.log(data);
+    const route = data?.result?.path?.map((pathType) => {
+      let type;
+      if (pathType.pathType === 1) {
+        type = {
+          type: '지하철',
+          totalTime: pathType?.info?.totalTime,
+          totalDistance: pathType?.info?.totalDistance,
+          payment: pathType?.info?.payment,
+          firstStartStation: pathType?.info?.firstStartStation,
+          lastEndStation: pathType?.info?.lastEndStation,
+        };
+      } else if (pathType.pathType === 2) {
+        type = {
+          type: '버스',
+          totalTime: pathType?.info?.totalTime,
+          totalDistance: pathType?.info?.totalDistance,
+          payment: pathType?.info?.payment,
+          firstStartStation: pathType?.info?.firstStartStation,
+          lastEndStation: pathType?.info?.lastEndStation,
+        };
+      } else if (pathType.pathType === 3) {
+        type = {
+          type: '버스+지하철',
+          totalTime: pathType?.info?.totalTime,
+          totalDistance: pathType?.info?.totalDistance,
+          payment: pathType?.info?.payment,
+          firstStartStation: pathType?.info?.firstStartStation,
+          lastEndStation: pathType?.info?.lastEndStation,
+        };
+      }
+      return type;
+    });
+
+    return route;
   }
 }
