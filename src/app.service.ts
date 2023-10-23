@@ -41,7 +41,16 @@ export class AppService {
 
     const data = await res.json();
     console.log(data);
-    return { addresses: data.addresses };
+    return {
+      addresses:
+        data.addresses.length === 0
+          ? []
+          : {
+              roadAddress: data.addresses[0].roadAddress,
+              x: data.addresses[0].x,
+              y: data.addresses[0].y,
+            },
+    };
   }
 
   async getDestination() {
