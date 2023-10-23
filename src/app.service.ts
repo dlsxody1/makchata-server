@@ -75,6 +75,7 @@ export class AppService {
     console.log(
       encodeURIComponent(this.configService.get<string>('ODSAY_KEY')),
     );
+    console.log(sx, sy, ex, ey);
     const destination = await fetch(
       `https://api.odsay.com/v1/api/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&OPT=1&apiKey=${encodeURIComponent(
         this.configService.get<string>('ODSAY_KEY'),
@@ -82,6 +83,7 @@ export class AppService {
     );
 
     const data = await destination.json();
+    console.log(data);
 
     return { data };
   }

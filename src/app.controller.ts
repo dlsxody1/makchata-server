@@ -28,6 +28,6 @@ export class AppController {
     @Query('ex') ex: string,
     @Query('ey') ey: string,
   ): Promise<any> {
-    return this.appService.getDestination(sx, ex, sy, ey);
+    return this.appService.getDestination(sx, sy, ex, ey);
   }
 }
